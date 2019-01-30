@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset='utf-8' />
+    <title>Barcelona's Districts In Class</title>
+    <meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no' />
+    <script src='https://api.tiles.mapbox.com/mapbox-gl-js/v0.52.0/mapbox-gl.js'></script>
+    <link href='https://api.tiles.mapbox.com/mapbox-gl-js/v0.52.0/mapbox-gl.css' rel='stylesheet' />
+    <script src='https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-directions/v4.0.0/mapbox-gl-directions.js'></script>
+    <link rel='stylesheet' href='https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-directions/v4.0.0/mapbox-gl-directions.css' type='text/css' />
+<style>
+        body { 
+          margin:0; 
+          padding:0;
+          font-family: Din-Black;
+          font-size: 14px;
+        }
+        #Map { 
+          position:absolute; 
+          top:0; 
+          bottom:0; 
+          width:100%;
+          max-zoom: 13;
+        }
+        #panel {
+          background:white; 
+          width:300px; 
+          border:1px solid rgba(0,0,0,0.5);
+          position: absolute;
+          right:16px;
+          top:16px;
+          box-shadow:0 0 6px 0 rgba(0,0,0,0.6);
+          color: rgba(0,0,0,0.5); 
+        } 
+        h4{
+          text-transform:uppercase;
+          border-bottom:1px solid rgba(0,0,0,0.1);
+          margin: 0;
+          padding: 16px;   
+        }
+
+        ul {
+          list-style-type: none;
+          margin: 0;
+          padding: 16px;
+        }
+
+        ul span{
+          width: 10px;
+          height: 10px;
+          display: inline-block;
+          margin-right: 8px;
+          border-radius: 50%
+        }
+        
+
+        dd{
+          margin-left: 0px;
+          margin-bottom: 8px;
+          font-weight: bold;
+        }
+
+        .mapboxgl-popup-content{
+          font-size: 15px;
+          color:rgb(255, 192, 20);
+          min-width: 250px;
+          max-width: 250px;
+          box-shadow: black;
+          background-color: rgba(0,0,0,0.8);
+          
+        }
+        dt{
+
+          margin-bottom: 8px;
+          color:white;
+        }
+
+    </style>
+</head>
+  
+<body>
+
+   <div id='Map'></div>
+   <div id='panel'>
+     <h4>Barcelona's Districts</h4>
+     <ul>
+      <li><span style="background:#68bfca; border:1px solid;"> </span> Ciutat Vella </li>
+      <li><span style="background:#ffffb3; border:1px solid;"> </span> Eixample </li>
+      <li><span style="background:#bebada; border:1px solid;"> </span> Sants-Montjuic </li>
+      <li><span style="background:#fb8072; border:1px solid;"> </span> Les Corts </li>
+      <li><span style="background:#80b1d3; border:1px solid;"> </span> Sarria-Sant Gervasi </li>
+      <li><span style="background:#fdb462; border:1px solid;"> </span> Gracia </li>
+      <li><span style="background:#b3de69; border:1px solid;"> </span> Horta-Guinardo </li>
+      <li><span style="background:#fccde5; border:1px solid;"> </span> Nou Barris </li>
+      <li><span style="background:#d9d9d9; border:1px solid;"> </span> Sant Andreu </li>
+      <li><span style="background:#bc80bd; border:1px solid;"> </span> Sant Marti </li>
+     </ul>
+   </div>
+ 
+  
+  <script>
+    var DistrictName = {
+      'Eixample':'Eixample',
+      'Nou Barris':'Nou Barris',
+      'Ciutat Vella':'Ciutat Vella',
+      'Sants-MontjuÃ¯c':'Sants-Montjuic',
+      'Les Corts':'Les Corts',
+      'SarriÃ -Sant Gervasi':'Sarria-Sant Gervasi',
+      'GrÃ cia':'Gracia',
+      'Sant Andreu':'Sant Andreu',
+      'Sant Mart铆':'Sant Marti',
+      'Horta-Guinard贸':'Horta-Guinardo',
+
+    }
+    mapboxgl.accessToken = 'pk.eyJ1Ijoidml2YTA5MTEiLCJhIjoiY2pxbnBhbHd6MGRwZDQzcXgxZ3hjdmN6YSJ9.PRa1ngQKjeLPcAATHK3arw';
+    var Map = new mapboxgl.Map({
+        container: 'Map', // container id
+        style: 'mapbox://styles/viva0911/cjr9fl0dj1g0z2sn1krprss28', // stylesheet location
+        center: [2.198,41.398], // starting position [lng, lat]
+        zoom: 13.10, // starting zoom               
+        minZoom: 13.00,
+        maxZoom: 18        
+        });
+
+
+    Map.on('mousemove',function(event){
+
+
+// console.log(event);
+
+if(Map.loaded()){
+
+
+ var Tu = Map.queryRenderedFeatures(event.point,{
+  layers:['bcn-4382ju']
+  });
+
+
+  Map.getCanvas().style.cursor = Tu.length ? 'crosshair':'';
+
+}
+});
+
+Map.on('load',function(){
+  Map.doubleClickZoom.disable();
+})
+   
+    Map.on('click', function(event){
+        // console.log('Mouse has been Clicked');
+        // console.log(event.point);
+        var parameters = {
+          layers: ["bcn-4382ju"]
+        }
+
+        var geometry = event.point;
+        var Tu = Map.queryRenderedFeatures(geometry,parameters.Area);
+        var Tu0 = Tu[0];
+        //console.log(Tu0.properties);
+        // console.log(features.length = ' features' );
+
+
+
+
+      
+        if (Tu.length){
+        var Area = Tu0.properties.Area || '-';
+        var District = DistrictName[Tu0.properties.NDistric] || '-';
+        var Locals = Tu0.properties.N_Locals || '-';
+        var Inhabitatge = Tu0.properties.NHabitatge || '-';
+        var Parks = Tu0.properties.N_Parceles || '-';
+        var Parking = Tu0.properties.N_Parquing || '-';
+        var Perimetre = Tu0.properties.Perimetre || '-';
+
+        var popup = new mapboxgl.Popup();
+        popup.setLngLat(event.lngLat);
+        popup.setHTML('<dl>' +  
+        '<dd>Area</dd>'  +
+        '<dt>' + Area + '</dt>'  +
+        '<dd>District</dd>'  +
+        '<dt>' + District + '</dt>'  +
+        '<dd>Locals</dd>'  +
+        '<dt>' + Locals + '</dt>'  +
+        '<dd>Inhabitatge</dd>' +
+        '<dt>' + Inhabitatge + '</dt>' +
+        '<dd>Parks</dd>' +
+        '<dt>' + Parks + '</dt>' +
+        '<dd>Parking</dd>' +
+       ' <dt>' + Parking + '</dt>' +
+        '<dd>Perimetre</dd>' +
+        '<dt>' + Perimetre + '</dt>' +
+      '</dl>');
+        popup.addTo(Map);
+        }
+
+    });
+
+    var nav = new mapboxgl.NavigationControl();
+  Map.addControl(nav, 'bottom-right');
+
+  var nav2 = new mapboxgl.FullscreenControl();
+  Map.addControl(nav2, 'bottom-left');
+
+  // Direction control( driving)
+  // Map.addControl(new MapboxDirections({
+  // accessToken: mapboxgl.accessToken
+  // }), 'top-left');
+  </script>
+
+</body>
+</html>
